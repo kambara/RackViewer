@@ -1,6 +1,6 @@
 $(function() {
-    initSlider( new Rack(_tana.filenames,
-                         _tana.image_dir) );
+    initSlider( new Rack(_rack.filenames,
+                         _rack.image_dir) );
 });
 
 function initSlider(rack) {
@@ -34,7 +34,7 @@ function Rack(filenames, image_dir) {
 
 Rack.prototype.classify = function(filenames) {
     var self = this;
-    $.each(_tana.filenames, function(index, filename) {
+    $.each(filenames, function(index, filename) {
         var ary = filename.split('.')[0].split('_');
         if (ary.length == 3 && ary[1] == "1") { // 箱内部
             self.addPhoto(ary[0], parseInt(ary[2]));
