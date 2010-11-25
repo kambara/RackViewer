@@ -1,6 +1,9 @@
 $(function() {
-    initSlider( new Rack(_rack.filenames,
-                         _rack.image_dir) );
+    initSlider( new Rack() );
+
+    $('#colorbox').click(function() {
+        $.colorbox.close();
+    });
 });
 
 function initSlider(rack) {
@@ -22,14 +25,13 @@ function initSlider(rack) {
 //
 // 棚
 //
-function Rack(filenames, image_dir) {
+function Rack() {
     this.boxes = {}; // 箱ID別のPhoto
     this.times = {}; // 時間別のPhoto
     this.timesArray = []; // ソートされた時間
     this.boxCount = 0; // 箱の個数
-    this.image_dir = image_dir;
 
-    this.classify(filenames);
+    this.classify(_rack.filenames);
 }
 
 Rack.prototype.classify = function(filenames) {
@@ -89,14 +91,14 @@ Rack.prototype.setTime = function(newTime) {
     }
     // すべての箱を再描画
     for (var boxId in this.boxes) {
-        var src = "images/gray.png";
+        var box = this.boxes[boxId];
         if (boxLatestPhoto[boxId]) {
-            var file = boxLatestPhoto[boxId].getBoxFileName();
-            src = this.image_dir + '/' + file;
+            box.showPhoto( boxLatestPhoto[boxId] );
+        } else {
+            box.hidePhoto();
         }
-        $('#box' + boxId).attr("src", src);
     }
-}
+};
 
 //
 // 箱
@@ -104,10 +106,40 @@ Rack.prototype.setTime = function(newTime) {
 function Box(id) {
     this.id = id;
     this.photos = [];
+    this.boxImg = $('#box' + id);
+    this.currentPhoto = null;
+
+    var self = this;
+    $('#box' + id).click(function() {
+        self.showPerspective();
+    });
 }
+
+Box.prototype.showPerspective = function() {
+    if (!this.currentPhoto) return;
+    var self = this;
+    $.colorbox({
+        href: self.currentPhoto.getPerspectiveFilePath(),
+        maxWidth: '80%',
+        maxHeight: '80%',
+        close: '',
+        title: self.currentPhoto.getTimeString()
+    });
+    
+};
 
 Box.prototype.addPhoto = function(photo) {
     this.photos.push(photo);
+};
+
+Box.prototype.showPhoto = function(photo) {
+    this.currentPhoto = photo;
+    this.boxImg.attr('src', photo.getBoxFilePath());
+};
+
+Box.prototype.hidePhoto = function() {
+    this.currentPhoto = null;
+    this.boxImg.attr('src', 'images/gray.png');
 };
 
 //
@@ -118,9 +150,32 @@ function Photo(boxId, time) {
     this.time = time;
 }
 
-Photo.prototype.getBoxFileName = function() {
-    return [this.boxId,
-            '1',
-            this.time
-           ].join('_') + '.jpg';
+Photo.prototype.getBoxFilePath = function() {
+    return _rack.image_dir
+        + '/'
+        + [this.boxId, '1', this.time].join('_')
+        + '.jpg';
+};
+
+Photo.prototype.getPerspectiveFilePath = function() {
+    return 'images/perspective.jpg'; // とりあえず
+
+    return _rack.image_dir
+        + '/'
+        + [this.boxId, '2', this.time].join('_')
+        + '.jpg';
+};
+
+Photo.prototype.getTimeString = function() {
+    var date = new Date();
+    date.setTime(this.time * 1000);
+    return [ date.getFullYear(),
+             date.getMonth(),
+             date.getDate()
+           ].join('/')
+        + ' '
+        + [ date.getHours(),
+            date.getMinutes(),
+            date.getSeconds()
+          ].join(':');
 };
