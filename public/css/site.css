@@ -1,0 +1,24 @@
+table#rack {
+    /*border: 3px #FFF solid;*/
+    border-collapse: separate;
+    border-spacing: 2px;
+}
+
+table#rack td {
+    width: 200px;
+    height: 150px;
+}
+
+#main {
+    width: 600px;
+    margin: 20px auto;
+}
+
+#slider {
+    margin-top: 20px;
+}
+
+img.box {
+    width: 200px;
+    height: 150px;
+}
