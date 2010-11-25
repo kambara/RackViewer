@@ -1,3 +1,5 @@
+# RackViewer
+
 ## インストール
 
     $ sudo gem install sinatra
@@ -18,4 +20,4 @@
 「箱ID\_写真の種類\_UnixTime.jpg」となっている。
 
 ダミーデータ
-[[http://dl.dropbox.com/u/288817/tmp/dummy-images.zip]]
+[http://dl.dropbox.com/u/288817/tmp/dummy-images.zip]
